@@ -1,0 +1,17 @@
+<h1>Recipes for the holidays</h1>
+
+Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+Porro, magnam facilis culpa totam neque aliquam quibusdam! 
+Similique deleniti quisquam ut tenetur iure dolor, eligendi 
+adipisci, neque expedita quos unde sit.
+
+
+<ul>
+    {% for item in data %}
+        <li><a href='recipes/{{item.id}}/'>{{ item.title }}</a>, by <a
+            href='authors/{{item.author.id}}'>{{ item.author }}</a>
+            {% endfor %}
+    </ul>
+    
+
+

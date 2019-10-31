@@ -1,0 +1,15 @@
+{% for item in data %}
+<h3>{{item.title}}, by <a href="/authors/{{item.author.id}}">{{ item.author.name}}</a></h3>
+<div>{{item.body}}
+</div>
+<div></div>
+<div>{{item.instructions}}
+</div>
+<div>
+    {{item.post_date}}
+</div>
+
+
+
+{% endfor %}
+
