@@ -1,10 +1,10 @@
-from django.shortcuts import render
-
+from django.shortcuts import render, HttpResponseRedirect, reverse
+from RecipeBoxV1.forms import RecipeItemAdd, AuthorAddForm
 from RecipeBoxV1.models import RecipeItem, Author
 
 
 def index(request):
-    html = "index.html"
+    html = 'index.html'
 
     data = RecipeItem.objects.all()
 
@@ -18,11 +18,38 @@ def read_recipe(request, id):
     return render(request, recipe_html, {'data': recipe_data})
 
 
-def authors_info(request, id):
-    author_html = "author.html"
+def author_view(request, id):
+    author_html = 'authors.html'
+    author = Author.objects.filter(id=id)
+    recipes = Recipes.objects.filter(author=id)
 
-    author_data = Author.objects.filter(id=id)
+    return render(request, author_html, {'data': author, 'recipes': recipes}
 
-    recipe_data = RecipeItem.objects.filter(author=id)
-    return render(request, author_html, {
-        'data': author_data, 'recipes': recipe_data})
+
+def authoraddview(request):
+    html = "generic_form.html"
+
+    if request.method == "post":
+        form = AuthorAddForm(request.Post)
+
+        if form.is_valid():
+            data = form.cleaned_data
+            Author.objects.create(name=data['name'])
+            return HttpResponseRedirect(reverse('homepage'))
+
+    form = AuthorAddForm()
+
+    return render(request, html, {'form': form})
+
+
+def recipeaddview(request):
+    html = 'add_recipe.html'
+
+    if request.method == 'POST':
+        form = RecipeItemAddForm(request.POST)
+        form.save()
+        return HttpResponseRedirect(reverse('homepage'))
+
+    form = AddRecipeForm()
+
+    return render(request, html, {'form': form})

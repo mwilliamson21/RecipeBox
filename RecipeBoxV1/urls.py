@@ -17,14 +17,18 @@ from django.contrib import admin
 from django.urls import path
 from RecipeBoxV1 import views
 from RecipeBoxV1.models import Author, RecipeItem
+from django.conf import settings
+from django.conf.urls.static import static
 
 admin.site.register(Author)
 admin.site.register(RecipeItem)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.index),
+    path('', views.index, name='homepage'),
     path('recipes/<int:id>/', views.read_recipe, name='recipe_list'),
-    path('authors/<int:id>/', views.authors_info, name='authors_page'),
+    # path('authors/<int:id>/', views.authors_info, name='authors_page'),
+    path('addrecipe/', views.addrecipeview, name='add_recipe_page'),
+    path('addauthor/', views.addauthorview, name='add_author_page')
 
 ]

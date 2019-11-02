@@ -8,6 +8,7 @@ RecipeItem
     author
 """
 from django.db import models
+from django.utils import timezone
 
 
 class Author(models.Model):
@@ -22,9 +23,9 @@ class RecipeItem(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
     body = models.TextField()
-    post_date = models.DateTimeField()
     time_required = models.IntegerField()
     instructions = models.TextField()
+    post_date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f"{self.title} - {self.author.name}"
