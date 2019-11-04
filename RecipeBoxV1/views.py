@@ -1,5 +1,7 @@
-from django.shortcuts import render, HttpResponseRedirect, reverse
-from RecipeBoxV1.forms import RecipeItemAdd, AuthorAddForm
+from django.shortcuts import (
+    render, HttpResponseRedirect, reverse
+)
+from RecipeBoxV1.forms import RecipeItemAddForm, AuthorAddForm
 from RecipeBoxV1.models import RecipeItem, Author
 
 
@@ -21,9 +23,11 @@ def read_recipe(request, id):
 def author_view(request, id):
     author_html = 'authors.html'
     author = Author.objects.filter(id=id)
-    recipes = Recipes.objects.filter(author=id)
+    recipes = RecipeItem.objects.filter(author=id)
 
-    return render(request, author_html, {'data': author, 'recipes': recipes}
+    return render(
+        request, author_html, {'data': author, 'recipes': recipes}
+    )
 
 
 def authoraddview(request):
@@ -50,6 +54,6 @@ def recipeaddview(request):
         form.save()
         return HttpResponseRedirect(reverse('homepage'))
 
-    form = AddRecipeForm()
+    form = RecipeItemAddForm()
 
     return render(request, html, {'form': form})

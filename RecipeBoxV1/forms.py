@@ -1,5 +1,5 @@
 from django import forms
-from RecipeBoxV1.models import Author, RecipeItem
+from RecipeBoxV1.models import RecipeItem
 
 
 class AuthorAddForm(forms.Form):
@@ -7,7 +7,7 @@ class AuthorAddForm(forms.Form):
     bio = forms.Charfield(widget=forms.Textarea)
 
 
-class RecipeItemAdd(forms.ModelForm):
+class RecipeItemAddForm(forms.ModelForm):
     class Meta:
         model = RecipeItem
         fields = [

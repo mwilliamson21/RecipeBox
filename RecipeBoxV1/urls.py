@@ -17,8 +17,8 @@ from django.contrib import admin
 from django.urls import path
 from RecipeBoxV1 import views
 from RecipeBoxV1.models import Author, RecipeItem
-from django.conf import settings
-from django.conf.urls.static import static
+# from django.conf import settings
+# from django.conf.urls.static import static
 
 admin.site.register(Author)
 admin.site.register(RecipeItem)
