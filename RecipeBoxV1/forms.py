@@ -3,8 +3,10 @@ from RecipeBoxV1.models import RecipeItem
 
 
 class AuthorAddForm(forms.Form):
+    username = forms.CharField(max_length=50)
+    password = forms.CharField(widget=forms.PasswordInput)
     name = forms.CharField(max_length=50)
-    bio = forms.Charfield(widget=forms.Textarea)
+    bio = forms.CharField(widget=forms.Textarea)
 
 
 class RecipeItemAddForm(forms.ModelForm):
@@ -17,3 +19,8 @@ class RecipeItemAddForm(forms.ModelForm):
             'time_required',
             'instructions'
         ]
+
+
+class LoginForm(forms.Form):
+    username = forms.CharField(max_length=50)
+    password = forms.CharField(widget=forms.PasswordInput)

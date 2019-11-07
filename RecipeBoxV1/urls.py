@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path
 from RecipeBoxV1 import views
@@ -29,6 +30,6 @@ urlpatterns = [
     path('recipes/<int:id>/', views.read_recipe, name='recipe_list'),
     # path('authors/<int:id>/', views.authors_info, name='authors_page'),
     path('addrecipe/', views.addrecipeview, name='add_recipe_page'),
-    path('addauthor/', views.addauthorview, name='add_author_page')
-
-]
+    path('addauthor/', views.addauthorview, name='add_author_page'),
+    path('login/', views.login_view, name='login')
+    path('logout/', views.logout_view, name='logout')

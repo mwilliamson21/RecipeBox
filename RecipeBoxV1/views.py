@@ -1,21 +1,28 @@
-from django.shortcuts import (
-    render, HttpResponseRedirect, reverse
-)
-from RecipeBoxV1.forms import RecipeItemAddForm, AuthorAddForm
+from django.shortcuts import render, HttpResponseRedirect, reverse
+from django.contrib.auth import login, logout, authenticate
 from RecipeBoxV1.models import RecipeItem, Author
+from RecipeBoxV1.forms import RecipeItemAddForm, AuthorAddForm, LoginForm
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 
 
 def index(request):
     html = 'index.html'
-
     data = RecipeItem.objects.all()
+
+    if request.user.is_authenticated:
+        button_href = '/logout/'
+        button_display = 'LOGOUT'
+    else:
+    # Do something for anonymous users.
+        button_href = 'login/'
+        button_display = 'LOGIN'
 
     return render(request, html, {'data': data})
 
 
 def read_recipe(request, id):
     recipe_html = "recipes.html"
-
     recipe_data = RecipeItem.objects.filter(id=id)
     return render(request, recipe_html, {'data': recipe_data})
 
@@ -29,8 +36,8 @@ def author_view(request, id):
         request, author_html, {'data': author, 'recipes': recipes}
     )
 
-
-def authoraddview(request):
+@login_required
+def addauthorview(request):
     html = "generic_form.html"
 
     if request.method == "post":
@@ -46,7 +53,8 @@ def authoraddview(request):
     return render(request, html, {'form': form})
 
 
-def recipeaddview(request):
+@login_required
+def addrecipeview(request):
     html = 'add_recipe.html'
 
     if request.method == 'POST':
@@ -57,3 +65,34 @@ def recipeaddview(request):
     form = RecipeItemAddForm()
 
     return render(request, html, {'form': form})
+
+
+def login_view(request):
+    html = "generic_form.html"
+
+    if request.method == "post":
+        form = LoginForm(request.POST)
+
+        if form.is_valid():
+            data = form.cleaned_data
+           if user = authenticate(
+                username=data['username'],
+                password=data['password']
+                ):
+                    login(request, user)
+                    return HttpResponseRedirect(
+                        request.GET.get('next', reverse('homepage'))
+                    
+
+
+            return HttpResponseRedirect(reverse('homepage'))
+
+    form = LoginForm()
+
+    return render(request, html, {'form': form})
+    print()
+
+
+def logout_view(request):
+    logout(request)
+    return HttpResponseRedirect(reverse)('homepage'))
