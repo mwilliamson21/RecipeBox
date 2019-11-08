@@ -1,5 +1,8 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse
+
+
 from django.contrib.auth import login, logout, authenticate
+
 from RecipeBoxV1.models import RecipeItem, Author
 from RecipeBoxV1.forms import RecipeItemAddForm, AuthorAddForm, LoginForm
 from django.contrib.auth.models import User
@@ -32,20 +35,23 @@ def author_view(request, id):
     author = Author.objects.filter(id=id)
     recipes = RecipeItem.objects.filter(author=id)
 
-    return render(
-        request, author_html, {'data': author, 'recipes': recipes}
-    )
+
+    return render(request, author_html, {'data': author, 'recipes': recipes})
+
 
 @login_required
 def addauthorview(request):
     html = "generic_form.html"
 
-    if request.method == "post":
-        form = AuthorAddForm(request.Post)
+    if request.method == "POST":
+        form = AuthorAddForm(request.POST)
 
         if form.is_valid():
             data = form.cleaned_data
-            Author.objects.create(name=data['name'])
+            Author.objects.create(
+                name=data['name'], 
+                bio=data['bio'],
+            )
             return HttpResponseRedirect(reverse('homepage'))
 
     form = AuthorAddForm()
@@ -53,41 +59,27 @@ def addauthorview(request):
     return render(request, html, {'form': form})
 
 
+
 @login_required
-def addrecipeview(request):
-    html = 'add_recipe.html'
+def recipeaddview(request):
+    html = 'generic_form.html'
+
 
     if request.method == 'POST':
         form = RecipeItemAddForm(request.POST)
-        form.save()
-        return HttpResponseRedirect(reverse('homepage'))
+        if form.is_valid():
+            data = form.cleaned_data
+            RecipeItem.objects.create(
+                author=data['author'],
+                title=data['title'],
+                body=data['body'],
+                time_required=data['time_required'],
+                instructions=data['instructions']
+            )
+            return HttpResponseRedirect(reverse('homepage'))
 
     form = RecipeItemAddForm()
 
-    return render(request, html, {'form': form})
-
-
-def login_view(request):
-    html = "generic_form.html"
-
-    if request.method == "post":
-        form = LoginForm(request.POST)
-
-        if form.is_valid():
-            data = form.cleaned_data
-           if user = authenticate(
-                username=data['username'],
-                password=data['password']
-                ):
-                    login(request, user)
-                    return HttpResponseRedirect(
-                        request.GET.get('next', reverse('homepage'))
-                    
-
-
-            return HttpResponseRedirect(reverse('homepage'))
-
-    form = LoginForm()
 
     return render(request, html, {'form': form})
     print()
