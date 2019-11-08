@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse
-from RecipeBoxV1.forms import RecipeItemAdd, AuthorAddForm
+from RecipeBoxV1.forms import RecipeItemAddForm, AuthorAddForm
 from RecipeBoxV1.models import RecipeItem, Author
 
 
@@ -23,18 +23,21 @@ def author_view(request, id):
     author = Author.objects.filter(id=id)
     recipes = Recipes.objects.filter(author=id)
 
-    return render(request, author_html, {'data': author, 'recipes': recipes}
+    return render(request, author_html, {'data': author, 'recipes': recipes})
 
 
 def authoraddview(request):
     html = "generic_form.html"
 
-    if request.method == "post":
-        form = AuthorAddForm(request.Post)
+    if request.method == "POST":
+        form = AuthorAddForm(request.POST)
 
         if form.is_valid():
             data = form.cleaned_data
-            Author.objects.create(name=data['name'])
+            Author.objects.create(
+                name=data['name'], 
+                bio=data['bio'],
+            )
             return HttpResponseRedirect(reverse('homepage'))
 
     form = AuthorAddForm()
@@ -43,13 +46,21 @@ def authoraddview(request):
 
 
 def recipeaddview(request):
-    html = 'add_recipe.html'
+    html = 'generic_form.html'
 
     if request.method == 'POST':
         form = RecipeItemAddForm(request.POST)
-        form.save()
-        return HttpResponseRedirect(reverse('homepage'))
+        if form.is_valid():
+            data = form.cleaned_data
+            RecipeItem.objects.create(
+                author=data['author'],
+                title=data['title'],
+                body=data['body'],
+                time_required=data['time_required'],
+                instructions=data['instructions']
+            )
+            return HttpResponseRedirect(reverse('homepage'))
 
-    form = AddRecipeForm()
+    form = RecipeItemAddForm()
 
     return render(request, html, {'form': form})
