@@ -12,16 +12,33 @@ from django.contrib.auth.decorators import login_required
 def index(request):
     html = 'index.html'
     data = RecipeItem.objects.all()
-
-    if request.user.is_authenticated:
-        button_href = '/logout/'
-        button_display = 'LOGOUT'
-    else:
-    # Do something for anonymous users.
-        button_href = 'login/'
-        button_display = 'LOGIN'
-
     return render(request, html, {'data': data})
+
+
+def login_view(request):
+    html = "generic_form.html"
+
+    if request.method == "POST":
+        form = loginForm(request.POST)
+
+        if form.is_valid():
+            data = form.cleaned_data
+            if user:= authenticate(
+                username=data['username'],
+                password=data['password']
+            ):
+                login(request, user)
+                return HttpResponseRedirect(
+                    request.GET.get('next', reverse('homepage'))
+                )
+
+    form = LoginForm()
+
+    return render(request, html, {'form': form}
+
+
+def logout_view(request):
+
 
 
 def read_recipe(request, id):
@@ -35,12 +52,11 @@ def author_view(request, id):
     author = Author.objects.filter(id=id)
     recipes = RecipeItem.objects.filter(author=id)
 
-
     return render(request, author_html, {'data': author, 'recipes': recipes})
 
 
 @login_required
-def addauthorview(request):
+def authoraddview(request):
     html = "generic_form.html"
 
     if request.method == "POST":
@@ -49,7 +65,7 @@ def addauthorview(request):
         if form.is_valid():
             data = form.cleaned_data
             Author.objects.create(
-                name=data['name'], 
+                name=data['name'],
                 bio=data['bio'],
             )
             return HttpResponseRedirect(reverse('homepage'))
@@ -59,11 +75,9 @@ def addauthorview(request):
     return render(request, html, {'form': form})
 
 
-
 @login_required
 def recipeaddview(request):
     html = 'generic_form.html'
-
 
     if request.method == 'POST':
         form = RecipeItemAddForm(request.POST)
@@ -87,4 +101,4 @@ def recipeaddview(request):
 
 def logout_view(request):
     logout(request)
-    return HttpResponseRedirect(reverse)('homepage'))
+    return HttpResponseRedirect(reverse)('homepage')

@@ -22,6 +22,7 @@ from RecipeBoxV1.models import Author, RecipeItem
 # from django.conf.urls.static import static
 
 from RecipeBoxV1.views import index, read_recipe, recipeaddview, authoraddview
+from RecipeBoxV1.views import login_view, logout_view
 
 
 admin.site.register(Author)
@@ -34,8 +35,8 @@ urlpatterns = [
     # path('authors/<int:id>/', views.authors_info, name='authors_page'),
 
     path('addrecipe/', recipeaddview),
-    path('addauthor/', authoraddview)
-    path('login/', views.login_view, name='login')
-    path('logout/', views.logout_view, name='logout')
+    path('addauthor/', authoraddview),
+    path('login/', login_view, name='login'),
+    # path('logout/', logout_view, name='logout')
 
 ]
