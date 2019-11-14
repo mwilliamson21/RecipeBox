@@ -7,6 +7,7 @@ from RecipeBoxV1.models import RecipeItem, Author
 from RecipeBoxV1.forms import RecipeItemAddForm, AuthorAddForm, LoginForm
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 
 
 def index(request):
@@ -19,25 +20,31 @@ def login_view(request):
     html = "generic_form.html"
 
     if request.method == "POST":
-        form = loginForm(request.POST)
+        form = LoginForm(request.POST)
 
         if form.is_valid():
             data = form.cleaned_data
-            if user:= authenticate(
+            user = authenticate(
                 username=data['username'],
                 password=data['password']
-            ):
+            )
+            if user is not None:                            
                 login(request, user)
-                return HttpResponseRedirect(
+            else:
+                HttpResponseRedirect(reverse('login'))
+            return HttpResponseRedirect(
                     request.GET.get('next', reverse('homepage'))
                 )
 
     form = LoginForm()
 
-    return render(request, html, {'form': form}
+    return render(request, html, {'form': form})
 
 
 def logout_view(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('homepage'))
+
 
 
 
@@ -58,21 +65,25 @@ def author_view(request, id):
 @login_required
 def authoraddview(request):
     html = "generic_form.html"
+    if request.user.is_staff:
+        if request.method == "POST":
+            form = AuthorAddForm(request.POST)
 
-    if request.method == "POST":
-        form = AuthorAddForm(request.POST)
+            if form.is_valid():
+                data = form.cleaned_data
+                u = User.objects.create_user(username=data['username'],
+                    password=data['password'])
+                Author.objects.create(
+                    user = u,
+                    name=data['name'],
+                    bio=data['bio'],
+                )
+                return HttpResponseRedirect(reverse('homepage'))
 
-        if form.is_valid():
-            data = form.cleaned_data
-            Author.objects.create(
-                name=data['name'],
-                bio=data['bio'],
-            )
-            return HttpResponseRedirect(reverse('homepage'))
+        form = AuthorAddForm()
 
-    form = AuthorAddForm()
-
-    return render(request, html, {'form': form})
+        return render(request, html, {'form': form})
+    return HttpResponseRedirect('/error')
 
 
 @login_required
@@ -101,4 +112,8 @@ def recipeaddview(request):
 
 def logout_view(request):
     logout(request)
-    return HttpResponseRedirect(reverse)('homepage')
+    return HttpResponseRedirect(reverse('homepage'))
+
+def errorpage(request):
+    html = 'error.html'
+    return render(request, html)
